@@ -16,7 +16,7 @@ def index(request):
     count=0
     if q:
         q = request.GET.get('q', '')
-        blogs =  blogs = Blogs.objects.filter(Q(title__icontains=q) or Q(blog_text__icontains=q))
+        blogs =  blogs = Blogs.objects.filter(Q(title__icontains=q) | Q(blog_text__icontains=q))
         count = blogs.count()
     if request.method == 'POST':
         form = BlogForm(data=request.POST, files=request.FILES)
