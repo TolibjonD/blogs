@@ -45,7 +45,7 @@
     <div class="col-md-8 {% if messages %}{% else %} mt-5{% endif %}">
         <h1>Blogs
         </h1>
-        <form class="d-inline mt-5" role="search" method="get">
+        <form class="d-inline mt-5" action="#blogs" role="search" method="get">
           <div class="input-group mb-3">
             <input type="search" class="form-control" placeholder="Searching..." aria-label="search" aria-describedby="button-addon1" name="q" value="{{ q }}">
             <button class="btn btn-secondary" type="submit" id="button-addon1">Search</button>
@@ -56,11 +56,11 @@
           {% if q %}
           <p class="bg-light border shadow"><b class="text-warning fs-2">{{ count }}</b> blogs found with <span class="text-danger">{{ q }}</span></p>
           {% endif %}
-            <div class="col bg-light shadow-sm rounded p-2" style="height: 550px; overflow-y: auto;">
+            <div class="col bg-light shadow-sm rounded p-2" style="height: 550px; overflow-y: auto;" id="blogs">
                 {% if blogs %}
                 {% for blog in blogs %}
                 {% if blog.photo %}
-                <div class="card float-right shadow-sm">
+                <div class="card float-right shadow-sm" id="{{ blog.id }}">
                     <div class="row">
                       <div class="col-sm-5">
                        <a href="{{ blog.photo.url }}">
@@ -118,7 +118,7 @@
   </div>
 
                 {% else %}
-                <div class="card float-right shadow-sm">
+                <div class="card float-right shadow-sm"  id="{{ blog.id }}">
                     <div class="row">
                       <div class="col">
                         <div class="card-block">
