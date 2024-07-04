@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %} Saidkodirov's Blogs {% endblock title %}
+{% load django_bootstrap5 %}
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+
+<div class="row">
+  <div class="col-md-8 mt-5">
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+  </div>
+</div>
+
+{% endfor %}
+{% endif %}
+
+<div class="row mx-auto p-3">
+    <div class="col-md-4 {% if messages %}{% else %} mt-5{% endif %}">
+        {% if form %}
+        {% if edit_form %}
+        <h2>Edit blog</h2>
+      <hr>
+        <form method="post" action="{% url "blogs:edit_form" blog.slug %}" enctype="multipart/form-data" id="edit_form">
+          {% csrf_token %}
+          {{ edit_form.media }}
+          {% bootstrap_form edit_form %}
+          <input type="submit" value="Save" class="btn btn-warning">
+      </form>
+        {% else %}
+        <h2>Write new blog</h2>
+      <hr>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.media }}
+            {% bootstrap_form form %}
+            <input type="submit" value="Save" class="btn btn-warning">
+        </form>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="col-md-8 {% if messages %}{% else %} mt-5{% endif %}">
+        <h1>Blogs
+        </h1>
+        <form class="d-inline mt-5" role="search" method="get">
+          <div class="input-group mb-3">
+            <input type="search" class="form-control" placeholder="Searching..." aria-label="search" aria-describedby="button-addon1" name="q" value="{{ q }}">
+            <button class="btn btn-secondary" type="submit" id="button-addon1">Search</button>
+          </div>
+        </form>
+        <hr class="text-secondary">
+        <div class="row">
+          {% if q %}
+          <p class="bg-light border shadow"><b class="text-warning fs-2">{{ count }}</b> blogs found with <span class="text-danger">{{ q }}</span></p>
+          {% endif %}
+            <div class="col bg-light shadow-sm rounded p-2" style="height: 550px; overflow-y: auto;">
+                {% if blogs %}
+                {% for blog in blogs %}
+                {% if blog.photo %}
+                <div class="card float-right shadow-sm">
+                    <div class="row">
+                      <div class="col-sm-5">
+                       <a href="{{ blog.photo.url }}">
+                        <img class="d-block w-100" src="{{ blog.photo.url }}" alt="{{ blog.title }}">
+                       </a>
+                      
+                      </div>
+                      <div class="col-sm-7">
+                        <div class="card-block">
+                          <!--           <h4 class="card-title">Small card</h4> -->
+                          <h5 class="card-title">
+                            {{ blog.title }}
+                          </h5>
+                          <p>
+                            {{ blog.blog_text|truncatewords:10|safe }}
+                          </p>
+                          <br>
+                          <hr>
+                         <!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ blog.id }}">
+    Read more
+  </button>
+
+                          <small class="text-muted">{{ blog.created_at }}</small>
+                          <a href="?delete_id={{blog.slug}}" onclick="return confirm('Are you sure to remove it ?')">
+                            <i class="fa-solid fa-trash" style="color: #FFD43B;"></i>
+                          </a>
+                          <a href="?edit_id={{blog.slug}}#edit_form">
+                            <i class="fa-solid fa-pen text-success"></i>
+                          </a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+<div class="modal fade" id="exampleModal-{{ blog.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel-{{ blog.id }}">{{ blog.title }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <img class="d-block w-100 rounded" src="{{ blog.photo.url }}" alt="{{ blog.title }}">
+        <hr>
+         {{ blog.blog_text|safe }}
+        </div>
+        <div class="modal-footer">
+            <small class="text-muted">{{ blog.created_at }}</small>
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+                {% else %}
+                <div class="card float-right shadow-sm">
+                    <div class="row">
+                      <div class="col">
+                        <div class="card-block">
+                          <!--           <h4 class="card-title">Small card</h4> -->
+                          <h5>
+                            {{ blog.title }}
+                          </h5>
+                          <span>
+                            {{ blog.blog_text|safe|truncatewords:10 }}
+                          </span>
+                          <br>
+                          <hr>
+                          <!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ blog.id }}">
+    Read more
+  </button>
+                          <small class="text-muted">{{ blog.created_at }}</small>
+                          <a href="?delete_id={{blog.slug}}" onclick="return confirm('Are you sure to remove it ?')">
+                            <i class="fa-solid fa-trash" style="color: #FFD43B;"></i>
+                          </a>
+                          <a href="?edit_id={{blog.slug}}">
+                            <i class="fa-solid fa-pen text-success"></i>
+                          </a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+
+                <!-- Modal -->
+<div class="modal fade" id="exampleModal-{{ blog.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">{{ blog.title }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {{ blog.blog_text|safe }}
+        </div>
+        <div class="modal-footer">
+            <small class="text-muted">{{ blog.created_at }}</small>
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <h5>No blogs found...</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
